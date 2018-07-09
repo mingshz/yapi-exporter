@@ -64,12 +64,12 @@ fun main(args: Array<String>) {
                 }
 
         if(cmd.hasOption("tee")){
-            val teeTarget = File(cmd.getOptionValue("tee"))
-            teeTarget.mkdirs()
+            val teeTarget = cmd.getOptionValue("tee")
+//            teeTarget.mkdirs()
             servers.listFiles().forEach {
 
                 // tee /etc/docker/daemon.json <<-'EOF'
-                println("tee ${teeTarget.absolutePath}/${it.name} <<-'EOF'")
+                println("tee $teeTarget/${it.name} <<-'EOF'")
                 it.reader(Charset.forName("UTF-8"))
                         .use {
                             it.forEachLine {
