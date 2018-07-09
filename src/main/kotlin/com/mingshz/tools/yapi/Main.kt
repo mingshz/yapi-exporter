@@ -6,6 +6,7 @@ import org.apache.commons.cli.MissingOptionException
 import org.apache.commons.cli.Options
 import java.io.File
 import java.io.FileInputStream
+import java.nio.charset.Charset
 import kotlin.system.exitProcess
 
 
@@ -23,6 +24,7 @@ fun main(args: Array<String>) {
     options.addRequiredOption("modules", null, true, "modules(id:name,...)")
     options.addOption("apiServer", true, "api server(default: server:8080)")
     options.addOption("cwd", true, "working cd. (default: ./)")
+    options.addOption("tee", true, "tee target path.")
 
     val parser = DefaultParser()
     try {
@@ -61,6 +63,23 @@ fun main(args: Array<String>) {
                             }
                 }
 
+        if(cmd.hasOption("tee")){
+            val teeTarget = File(cmd.getOptionValue("tee"))
+            teeTarget.mkdirs()
+            servers.listFiles().forEach {
+
+                // tee /etc/docker/daemon.json <<-'EOF'
+                println("tee ${teeTarget.absolutePath}/${it.name} <<-'EOF'")
+                it.reader(Charset.forName("UTF-8"))
+                        .use {
+                            it.forEachLine {
+                                println(it)
+                            }
+                        }
+                // EOF
+                println("EOF")
+            }
+        }
 
     } catch (e: MissingOptionException) {
         val formatter = HelpFormatter()
