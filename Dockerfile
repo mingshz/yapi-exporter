@@ -3,7 +3,7 @@ FROM gradle:jdk8 as builder
 
 ADD . /build/
 WORKDIR /build/
-RUN ["/build/gradlew","build"]
+RUN ["./gradlew","--no-daemon","build"]
 #到了这里的时候肯定是线上版本了，所以直接打包
 
 FROM java:8-jre
