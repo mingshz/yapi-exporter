@@ -16,7 +16,8 @@ class ServerGenerator(
          */
         private val alias: String,
         private val home: File,
-        private val stream: InputStream
+        private val stream: InputStream,
+        private val baseUri: String = ""
 ) {
     private val uri = alias
     fun work() {
@@ -94,9 +95,9 @@ class ServerGenerator(
 //                            path.textValue().match
 //                            println(wildcardRegex.containsMatchIn(path.textValue()))
                                     val now = if (wildcardRegex.containsMatchIn(path.textValue())) {
-                                        start.plus(" ~ ").plus(path.textValue().replace(wildcardRegex, toPatternWildcard))
+                                        start.plus(" ~ ").plus(baseUri).plus(path.textValue().replace(wildcardRegex, toPatternWildcard))
                                     } else {
-                                        start.plus(" = ").plus(path.textValue())
+                                        start.plus(" = ").plus(baseUri).plus(path.textValue())
                                     }
                                     now
                                 }

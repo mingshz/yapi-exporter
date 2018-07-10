@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     options.addOption("server", true, "yapi server url(default:http://api.mingshz.com)")
     options.addOption("user", true, "username(default:api@mingshz.com)")
     options.addRequiredOption("password", null, true, "password of this user.")
-    options.addRequiredOption("modules", null, true, "modules(id:name,...)")
+    options.addRequiredOption("modules", null, true, "modules(id:name[:baseUri],...)")
     options.addOption("apiServer", true, "api server(default: server:8080)")
     options.addOption("cwd", true, "working cd. (default: ./)")
     options.addOption("tee", true, "tee target path.")
@@ -47,23 +47,27 @@ fun main(args: Array<String>) {
         // 处理nginx
         val servers = File(home, "nginx")
         servers.mkdir()
-        home.listFiles { _, name -> name.endsWith("-api.json") }
+
+        cmd.getOptionValue("modules")
+                .split(",")
                 .forEach {
-                    //                取名字
-                    // 取文件内容
-                    val name = it.name.removeSuffix("-api.json")
-                    FileInputStream(it)
+                    val ds = it.split(":")
+                    val name = ds[1]
+                    val baseUri = if (ds.size > 2) ds[2] else ""
+
+                    FileInputStream(File(home, "$name-api.json"))
                             .use {
                                 // 输出位置
                                 ServerGenerator(
                                         alias = name,
                                         home = servers,
-                                        stream = it
+                                        stream = it,
+                                        baseUri = baseUri
                                 ).work()
                             }
                 }
 
-        if(cmd.hasOption("tee")){
+        if (cmd.hasOption("tee")) {
             val teeTarget = cmd.getOptionValue("tee")
 //            teeTarget.mkdirs()
             servers.listFiles().forEach {
