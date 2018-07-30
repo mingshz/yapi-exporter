@@ -25,6 +25,7 @@ fun main(args: Array<String>) {
     options.addOption("apiServer", true, "api server(default: server:8080)")
     options.addOption("cwd", true, "working cd. (default: ./)")
     options.addOption("tee", true, "tee target path.")
+    options.addOption("schema", true, "fixed schema.")
 
     val parser = DefaultParser()
     try {
@@ -62,7 +63,8 @@ fun main(args: Array<String>) {
                                         alias = name,
                                         home = servers,
                                         stream = it,
-                                        baseUri = baseUri
+                                        baseUri = baseUri,
+                                        fixedSchema = if (cmd.hasOption("schema")) cmd.getOptionValue("schema") else null
                                 ).work()
                             }
                 }

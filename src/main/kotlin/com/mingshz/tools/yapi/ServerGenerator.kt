@@ -17,6 +17,7 @@ class ServerGenerator(
         private val alias: String,
         private val home: File,
         private val stream: InputStream,
+        private val fixedSchema: String?,
         private val baseUri: String = ""
 ) {
     private val uri = alias
@@ -117,13 +118,14 @@ class ServerGenerator(
                         )
                     }
 
+            val schema = fixedSchema ?: "${'$'}scheme"
 
             // 最后加入
             w.write(
                     """
         location / {
 #             permanent
-            rewrite ^(.+)${'$'} ${'$'}scheme://cdn_${'$'}host${'$'}request_uri;
+            rewrite ^(.+)${'$'} $schema://cdn_${'$'}host${'$'}request_uri;
         }
 
     }
