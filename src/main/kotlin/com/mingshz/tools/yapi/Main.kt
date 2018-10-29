@@ -6,6 +6,7 @@ import org.apache.commons.cli.MissingOptionException
 import org.apache.commons.cli.Options
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.nio.charset.Charset
 import kotlin.system.exitProcess
 
@@ -22,6 +23,7 @@ fun main(args: Array<String>) {
     options.addOption("user", true, "username(default:api@mingshz.com)")
     options.addRequiredOption("password", null, true, "password of this user.")
     options.addRequiredOption("modules", null, true, "modules(id:name[:baseUri],...)")
+    options.addOption("statics", null, true, "statics(uris>serverTarget,...)")
     options.addOption("apiServer", true, "api server(default: server:8080)")
     options.addOption("cwd", true, "working cd. (default: ./)")
     options.addOption("tee", true, "tee target path.")
@@ -68,6 +70,25 @@ fun main(args: Array<String>) {
                                 ).work()
                             }
                 }
+
+        if (cmd.hasOption("statics")) {
+            cmd.getOptionValue("statics")
+                    .split(",")
+                    .forEach { originString ->
+                        // uri1[,uri2]>serverTarget
+                        val l1 = originString.split(">")
+                        val target = l1[1]
+                        FileOutputStream(File(servers, "_statics.nginx"))
+                                .use {
+                                    StaticServerGenerator(
+                                            uris = l1[0],
+                                            target = target,
+                                            stream = it
+                                    )
+                                            .work()
+                                }
+                    }
+        }
 
         if (cmd.hasOption("tee")) {
             val teeTarget = cmd.getOptionValue("tee")
