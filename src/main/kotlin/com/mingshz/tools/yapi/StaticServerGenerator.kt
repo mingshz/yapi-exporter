@@ -17,6 +17,7 @@ class StaticServerGenerator(
 
         writer.use {
             it.write("""
+
     server {
         listen 80;
         server_name $uris;
@@ -29,6 +30,7 @@ class StaticServerGenerator(
             proxy_set_header        Host ${'$'}http_host;
         }
     }
+
             """)
 
             it.flush()

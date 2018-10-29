@@ -71,6 +71,10 @@ fun main(args: Array<String>) {
                             }
                 }
 
+        val lastStaticFile = File(servers, "_statics.nginx")
+        if (lastStaticFile.exists())
+            lastStaticFile.delete()
+
         if (cmd.hasOption("statics")) {
             cmd.getOptionValue("statics")
                     .split(",")
@@ -78,7 +82,7 @@ fun main(args: Array<String>) {
                         // uri1[,uri2]>serverTarget
                         val l1 = originString.split(">")
                         val target = l1[1]
-                        FileOutputStream(File(servers, "_statics.nginx"))
+                        FileOutputStream(File(servers, "_statics.nginx"), true)
                                 .use {
                                     StaticServerGenerator(
                                             uris = l1[0],
